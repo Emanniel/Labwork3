@@ -1,0 +1,131 @@
+"""
+    Program Purpose: program to develop a Python program for your ABC Hotel Reservation System
+    For example: The system should prompt the user to select a room type (Single, Double, or Suite) and then ask for the number of rooms to reserve.
+    Programmer: Muhammad Aiman Danial Bin Noor Azimi
+    Date: 1 March 2024
+"""
+# Define room types and their nightly rates
+room_types = ["Single", "Double", "Suite"]
+nightly_rates = [100, 150, 250]
+
+# Define additional services and their prices
+additional_services = {
+    1: {"name": "Breakfast", "price": 20},
+    2: {"name": "WiFi", "price": 10},
+    3: {"name": "Parking", "price": 15}
+}
+
+
+# Function to calculate the total cost
+def calculate_total_cost(room_type_index, num_rooms, check_in_date, check_out_date, additional_services_list):
+    room_rate = nightly_rates[room_type_index]
+    duration_of_stay = (check_out_date - check_in_date).days
+    room_cost = room_rate * num_rooms * duration_of_stay
+
+    additional_services_cost = sum(additional_services[service]['price'] for service in additional_services_list)
+
+    total_cost = room_cost + additional_services_cost
+    return total_cost
+
+
+# Function to display reservation details
+def display_reservation_details(room_type_index, num_rooms, check_in_date, check_out_date, additional_services_list,
+                                total_cost):
+    print("\nReservation Details:")
+    print(f"Room Type: {room_types[room_type_index]}")
+    print(f"Number of Rooms: {num_rooms}")
+    print(f"Check-in Date: {check_in_date}")
+    print(f"Check-out Date: {check_out_date}")
+    print("Additional Services:")
+    for service_id in additional_services_list:
+        if service_id == 1:  # Breakfast
+            print(
+                f"- {additional_services[service_id]['name']} ({num_rooms} persons). RM{additional_services[service_id]['price'] * num_rooms}")
+        elif service_id == 2:  # WiFi
+            print(
+                f"- {additional_services[service_id]['name']} ({check_out_date - check_in_date} days). RM{additional_services[service_id]['price'] * (check_out_date - check_in_date).days}")
+        elif service_id == 3:  # Parking
+            print(
+                f"- {additional_services[service_id]['name']} ({check_out_date - check_in_date} days). RM{additional_services[service_id]['price'] * (check_out_date - check_in_date).days}")
+    print(f"Total Cost: RM{total_cost}")
+
+
+# Main program
+def main():
+    print("Welcome to Maniel Hotel Reservation System")
+
+    # Input room type
+    print("\nAvailable Room Types:")
+    for i, room_type in enumerate(room_types):
+        print(f"{i + 1}. {room_type} RM{nightly_rates[i]} per night")
+    while True:
+        try:
+            room_type_index = int(input("Please select a room type (1/2/3): ")) - 1
+            if room_type_index in range(len(room_types)):
+                break
+            else:
+                print("Invalid room type selection. Please try again.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+    # Input number of rooms
+    while True:
+        try:
+            num_rooms = int(input("Enter the number of rooms: "))
+            if num_rooms > 0:
+                break
+            else:
+                print("Number of rooms must be greater than 0. Please try again.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+    # Input check-in and check-out dates
+    while True:
+        check_in_date = input("Enter your check-in date (YYYY-MM-DD): ")
+        check_out_date = input("Enter your check-out date (YYYY-MM-DD): ")
+        try:
+            check_in_date = datetime.datetime.strptime(check_in_date, "%Y-%m-%d")
+            check_out_date = datetime.datetime.strptime(check_out_date, "%Y-%m-%d")
+            if check_out_date > check_in_date:
+                break
+            else:
+                print("Check-out date must be after check-in date. Please try again.")
+        except ValueError:
+            print("Invalid date format. Please enter dates in YYYY-MM-DD format.")
+
+    # Input additional services
+    additional_services_list = []
+    additional_input = input("Would you like to add any additional services? (yes/no): ")
+    if additional_input.lower() == "yes":
+        print("Additional Services:")
+        for service_id, service_info in additional_services.items():
+            print(f"{service_id}. {service_info['name']} RM{service_info['price']}")
+        while True:
+            additional_services_input = input("Please select additional services (separated by commas, e.g., 1,2,3): ")
+            try:
+                additional_services_selected = [int(service_id) for service_id in additional_services_input.split(",")]
+                additional_services_list = additional_services_selected
+                break
+            except ValueError:
+                print("Invalid input. Please enter the service numbers separated by commas.")
+
+    # Calculate total cost
+    total_cost = calculate_total_cost(room_type_index, num_rooms, check_in_date, check_out_date,
+                                      additional_services_list)
+
+    # Display reservation details
+    display_reservation_details(room_type_index, num_rooms, check_in_date.strftime("%Y-%m-%d"),
+                                check_out_date.strftime("%Y-%m-%d"), additional_services_list, total_cost)
+
+    # Confirm reservation
+    confirmation = input("\nWould you like to confirm your reservation? (yes/no): ")
+    if confirmation.lower() == "yes":
+        print("Reservation confirmed. Thank you for choosing ABC Hotel. Enjoy your stay!")
+    else:
+        print("Reservation cancelled. Thank you.")
+
+
+if __name__ == "__main__":
+    import datetime
+
+    main()
